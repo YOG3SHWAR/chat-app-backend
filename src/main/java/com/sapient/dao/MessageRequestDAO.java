@@ -50,6 +50,29 @@ public class MessageRequestDAO implements IMessageRequestDAO {
 		return null;
 	}
 
+	public List<MessageRequest> getMessage(String receiverId) {
+		String sql = "select request_id, sender_id, receiver_id, message_body, is_accepted from messagerequest where receiver_id = ?";
+		List<MessageRequest> list = null;
+		try {
+			PreparedStatement ps = GetConnection.getMySQLConn().prepareStatement(sql);
+			ps.setString(1, receiverId);
+			ResultSet rs = ps.executeQuery();
+			list = new ArrayList<MessageRequest>();
+			while (rs.next()) {
+				MessageRequest messageRequest = new MessageRequest();
+				messageRequest.setSenderId(rs.getString(2));
+				messageRequest.setReceiverId(rs.getString(3));
+				messageRequest.setMessageBody(rs.getString(4));
+				messageRequest.setIsAccepted(rs.getInt(5));
+				list.add(messageRequest);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+
 	public List<MessageRequest> getAllMessages() {
 		String sql = "select request_id, sender_id, receiver_id, message_body, is_accepted from messagerequest";
 		List<MessageRequest> list = null;
